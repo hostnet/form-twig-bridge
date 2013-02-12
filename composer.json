@@ -1,0 +1,12 @@
+{
+    "require": {
+        "symfony/form": "2.1.*",
+        "symfony/validator": "2.1.*",
+        "symfony/config": "2.1.*",
+        "symfony/translation": "2.1.*",
+        "symfony/twig-bridge": "2.1.*"
+    },
+    "autoload": {
+        "psr-0": {"Hostnet": "src/"}
+    }
+}
