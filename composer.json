@@ -1,5 +1,21 @@
 {
     "name": "hostnet/form-twig-bridge",
+    "description": "Allows usage of the Symfony 2 form framework without using all of Symfony 2!",
+    "type": "library",
+    "keywords": ["form"],
+    "homepage": "https://github.com/hostnet/form-twig-bridge",
+    "license": "EPL-1.0",
+    "authors": [
+        {
+            "name": "Nico Schoenmaker",
+            "homepage": "http://nschoenmaker.nl",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/hostnet/form-twig-bridge/issues",
+        "source": "https://github.com/hostnet/form-twig-bridge"
+    },
     "require": {
         "symfony/form": "2.1.*",
         "symfony/validator": "2.1.*",
