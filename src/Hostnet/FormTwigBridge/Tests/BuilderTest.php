@@ -66,7 +66,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     $csrf->expects($this->once())->method('generateCsrfToken')->will($this->returnValue('foo'));
 
     $environment =
-      $builder->setCsrfProvider($csrf)->createTwigEnvironmentBuilder()->setTwigLoader($loader)
+      $builder->setCsrfProvider($csrf)->createTwigEnvironmentBuilder()->prependTwigLoader($loader)
               ->build();
     $factory = $builder->buildFormFactory();
     $form = $factory->createBuilder()->add('first_name')->getForm();

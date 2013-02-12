@@ -54,8 +54,17 @@ class TwigEnvironmentBuilder
 
   public function __construct()
   {
-    // TODO what if we're being composed?
-    $this->vendor_directory = __DIR__ . '/../../../vendor/';
+    // Try the composed path
+    $this->vendor_directory = __DIR__ . '/../../../../../../vendor/';
+    try {
+      $this->twig_loader =
+        new \Twig_Loader_Filesystem(array($this->vendor_directory . self::TWIG_TEMPLATE_DIR));
+    } catch(\Twig_Error_Loader $e) {
+      // Fall back to the directly cloned path
+      $this->vendor_directory = __DIR__ . '/../../../vendor/';
+      $this->twig_loader =
+        new \Twig_Loader_Filesystem(array($this->vendor_directory . self::TWIG_TEMPLATE_DIR));
+    }
   }
 
   /**
@@ -70,13 +79,14 @@ class TwigEnvironmentBuilder
   }
 
   /**
-   * (Optionally) add a additional loader to override some of the default twig templates
+   * (Optionally) prepend a loader to override some of the default twig templates
    * @param \Twig_LoaderInterface $twig_loader
    * @return \Hostnet\FormTwigBridge\TwigEnvironmentBuilder chainable
    */
-  public function setTwigLoader(\Twig_LoaderInterface $twig_loader)
+  public function prependTwigLoader(\Twig_LoaderInterface $twig_loader)
   {
-    $this->twig_loader = $twig_loader;
+    // Give precedence to the passed in loader
+    $this->twig_loader = new \Twig_Loader_Chain(array($twig_loader, $this->twig_loader));
     return $this;
   }
 
@@ -96,17 +106,7 @@ class TwigEnvironmentBuilder
     if(!$this->csrf_provider instanceof CsrfProviderInterface) {
       throw new \DomainException('Need a csrf provider to continue');
     }
-    if(!$this->vendor_directory) {
-      throw new \DomainException('Need a vendor directory to continue');
-    }
-    $loader =
-      new \Twig_Loader_Filesystem(array($this->vendor_directory . self::TWIG_TEMPLATE_DIR));
-    // Give precedence to the passed in loader
-    if($this->twig_loader) {
-      $loader = new \Twig_Loader_Chain(array($this->twig_loader, $loader));
-    }
-    $environment = new \Twig_Environment($loader);
-
+    $environment = new \Twig_Environment($this->twig_loader);
     $this->addTranslationExtension($environment);
     $this->addFormExtension($environment);
     return $environment;

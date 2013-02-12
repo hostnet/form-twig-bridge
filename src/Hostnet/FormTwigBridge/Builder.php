@@ -25,7 +25,8 @@ class Builder
 
   /**
    * The CSRF secret the form framework should use
-   * @param String $csrf_secret
+   * @param CsrfProviderInterface $csrf_provider
+   * @return \Hostnet\FormTwigBridge\Builder
    */
   public function setCsrfProvider(CsrfProviderInterface $csrf_provider)
   {
