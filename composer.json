@@ -1,4 +1,5 @@
 {
+    "name": "hostnet/form-twig-bridge",
     "require": {
         "symfony/form": "2.1.*",
         "symfony/validator": "2.1.*",
