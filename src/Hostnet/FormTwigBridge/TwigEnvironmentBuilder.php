@@ -4,8 +4,6 @@ use Symfony\Bridge\Twig\Form\TwigRenderer;
 
 use Symfony\Bridge\Twig\Extension\FormExtension;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
 use Symfony\Component\Translation\Loader\XliffFileLoader;
