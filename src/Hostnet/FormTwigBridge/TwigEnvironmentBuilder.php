@@ -50,6 +50,11 @@ class TwigEnvironmentBuilder
    */
   private $form_theme = 'form_div_layout.html.twig';
 
+  /**
+   * @var String The locale, like en, fr_FR, fr_BE
+   */
+  private $locale = 'en';
+
   public function __construct()
   {
     // Try the composed path
@@ -99,6 +104,16 @@ class TwigEnvironmentBuilder
     return $this;
   }
 
+  /**
+   * @param String $locale The locale, like en, fr_FR, fr_BE
+   * @return \Hostnet\FormTwigBridge\TwigEnvironmentBuilder
+   */
+  public function setLocale($locale)
+  {
+    $this->locale = $locale;
+    return $this;
+  }
+
   public function build()
   {
     if(!$this->csrf_provider instanceof CsrfProviderInterface) {
@@ -112,19 +127,22 @@ class TwigEnvironmentBuilder
 
   /**
    * Adds translation extension
-   * @todo Add support for other cultures?
+   * Use ->setLocale() to translate to a different language
    * @param \Twig_environment $environment
    */
   private function addTranslationExtension(\Twig_environment $environment)
   {
     // Set up the Translation component
-    $translator = new Translator('en');
+    $translator = new Translator($this->locale);
+    $pos = strpos($this->locale, '_');
+    $file = 'validators.' . ($pos ? substr($this->locale, 0, $pos) : $this->locale) . '.xlf';
     $translator->addLoader('xlf', new XliffFileLoader());
     $translator
-        ->addResource('xlf', $this->vendor_directory . self::FORM_TRANSLATIONS_DIR . 'validators.en.xlf', 'en', 'validators');
+        ->addResource('xlf', $this->vendor_directory . self::FORM_TRANSLATIONS_DIR . $file,
+          $this->locale, 'validators');
     $translator
-        ->addResource('xlf', $this->vendor_directory . self::VALIDATOR_TRANSLATIONS_DIR . 'validators.en.xlf', 'en',
-          'validators');
+        ->addResource('xlf', $this->vendor_directory . self::VALIDATOR_TRANSLATIONS_DIR . $file,
+          $this->locale, 'validators');
     $environment->addExtension(new TranslationExtension($translator));
   }
 

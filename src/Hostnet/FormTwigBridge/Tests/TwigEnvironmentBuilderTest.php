@@ -14,6 +14,13 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals($builder, $builder->setCsrfProvider(new DefaultCsrfProvider('foo')));
   }
 
+  public function testSetLocale()
+  {
+    // Test chaining
+    $builder = new TwigEnvironmentBuilder();
+    $this->assertEquals($builder, $builder->setLocale('nl_NL'));
+  }
+
   public function testBuild()
   {
     // 1. Fail without CSRF
