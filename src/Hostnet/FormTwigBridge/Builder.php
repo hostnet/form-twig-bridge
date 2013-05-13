@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 
 use Symfony\Component\Form\Extension\Csrf\CsrfExtension;
 
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+
 use Symfony\Component\Form\Forms;
 
 /**
@@ -52,6 +54,7 @@ class Builder
     $validator = Validation::createValidator();
     return Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
                                             ->addExtension(new ValidatorExtension($validator))
+                                            ->addExtension(new HttpFoundationExtension())
                                             ->getFormFactory();
   }
 
