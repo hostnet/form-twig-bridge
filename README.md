@@ -29,10 +29,23 @@ Installation
       $builder->setCsrfProvider($csrf)->createTwigEnvironmentBuilder()->build();
    $factory = $builder->buildFormFactory();
    ```
-4. Use the form factory to create your form, see the [symfony docs](http://symfony.com/doc/current/book/forms.html).
-4. If you use Twig templates: Use the form factory and the twig environment like you'd normally do
-5. If you use PHP templates, use the [public methods](https://github.com/hostnet/form-twig-bridge/blob/master/src/Hostnet/FormTwigBridge/PHPRenderer.php) of the PHPRenderer.
+5. Use the form factory to create your form, see the [symfony docs](http://symfony.com/doc/current/book/forms.html).
+6. If you use Twig templates: Use the form factory and the twig environment like you'd normally do
+7. If you use PHP templates, use the [public methods](https://github.com/hostnet/form-twig-bridge/blob/master/src/Hostnet/FormTwigBridge/PHPRenderer.php) of the PHPRenderer.
    Initialize it with ```new PHPRenderer($twig_environment)```
+
+Optional configuration options
+------------
+
+Builder
+- ```enableAnnotationMapping``` enables doctrine annotation mapping (requires [doctrine/annotations](https://packagist.org/packages/doctrine/annotations))
+- ```addFormExtension``` adds your custom form extensions
+
+TwigEnvironmentBuilder
+- ```prependTwigLoader``` adds additional twig loaders that are called before the loader added by the form-twig-bridge. You can always add loaders yourself, even after building.
+- ```setFormTheme``` for a custom form theme, note that you will have to add a loader that loads your form theme
+- ```setLocale``` for localized forms.
+
 
 Running the unit-tests
 ------------
