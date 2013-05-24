@@ -19,6 +19,21 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals($builder, $builder->setCsrfProvider(new DefaultCsrfProvider('bar')));
   }
 
+  public function testEnableAnnotationMapping()
+  {
+    // Test chaining
+    $builder = new Builder();
+    $this->assertEquals($builder, $builder->enableAnnotationMapping());
+  }
+
+  public function testAddFormExtension()
+  {
+    // Test chaining
+    $extension = $this->getMock('Symfony\Component\Form\FormExtensionInterface', get_class_methods('Symfony\Component\Form\FormExtensionInterface'));
+    $builder = new Builder();
+    $this->assertEquals($builder, $builder->addFormExtension($extension));
+  }
+
   public function testCreateTwigEnvironmentBuilder()
   {
     // 1. Fail without CSRF

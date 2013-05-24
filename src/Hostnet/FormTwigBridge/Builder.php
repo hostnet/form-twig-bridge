@@ -1,5 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge;
+use Symfony\Component\Form\FormExtensionInterface;
+
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 
 use Symfony\Component\Validator\Validation;
@@ -22,6 +24,10 @@ use Symfony\Component\Form\FormFactoryBuilder;
 class Builder
 {
   private $csrf_provider;
+
+  private $annotation_mapping_enabled = false;
+
+  private $form_extensions = array();
 
   /**
    * The CSRF secret the form framework should use
@@ -46,28 +52,51 @@ class Builder
   }
 
   /**
-   * Builds the factory
-   * @return \Symfony\Component\Form\FormFactoryInterface
+   * Enable the annotation mapping. Only works if the doctrine/annotations library is included
+   * @param bool $enabled Whether to enable the feature.
+   * @return \Hostnet\FormTwigBridge\Builder
    */
-  public function buildFormFactory($enableAnnotationMapping = false)
+  public function enableAnnotationMapping($enabled = true)
   {
-    $this->ensureCsrfProviderExists();
-    $validator = $enableAnnotationMapping ?
-      Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator() :
-      Validation::createValidator();
-    $builder = Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
-                                            ->addExtension(new ValidatorExtension($validator))
-                                            ->addExtension(new HttpFoundationExtension());
-    $this->registerFormExtensions($builder);
-    return $builder->getFormFactory();
+    $this->annotation_mapping_enabled = (bool) $enabled;
+    return $this;
   }
 
   /**
-   * Users should subclass this Builder and override this method to register
-   * any extra Form Extensions they require.
-   * @param FormFactoryBuilder $builder
+   * Add your own form extensions through this hook
+   * @param FormExtensionInterface $extension
+   * @return \Hostnet\FormTwigBridge\Builder
    */
-  protected function registerFormExtensions(FormFactoryBuilder $builder) {
+  public function addFormExtension(FormExtensionInterface $extension)
+  {
+    $this->form_extensions[] = $extension;
+    return $this;
+  }
+
+  /**
+   * Builds the factory
+   * @return \Symfony\Component\Form\FormFactoryInterface
+   */
+  public function buildFormFactory()
+  {
+    $this->ensureCsrfProviderExists();
+    $validator = $this->buildValidator();
+    $builder = Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
+                                            ->addExtension(new ValidatorExtension($validator))
+                                            ->addExtension(new HttpFoundationExtension());
+    foreach($this->form_extensions as $extension) {
+      $builder->addExtension($extension);
+    }
+    return $builder->getFormFactory();
+  }
+
+  private function buildValidator()
+  {
+    $builder = Validation::createValidatorBuilder();
+    if($this->annotation_mapping_enabled) {
+      $builder->enableAnnotationMapping();
+    }
+    return $builder->getValidator();
   }
 
   private function ensureCsrfProviderExists()
