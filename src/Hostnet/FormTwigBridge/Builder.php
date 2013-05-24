@@ -48,10 +48,12 @@ class Builder
    * @todo allow to add own form extensions?
    * @return \Symfony\Component\Form\FormFactoryInterface
    */
-  public function buildFormFactory()
+  public function buildFormFactory($enableAnnotationMapping = false)
   {
     $this->ensureCsrfProviderExists();
-    $validator = Validation::createValidator();
+    $validator = $enableAnnotationMapping ?
+      Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator() :
+      Validation::createValidator();
     return Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
                                             ->addExtension(new ValidatorExtension($validator))
                                             ->addExtension(new HttpFoundationExtension())
