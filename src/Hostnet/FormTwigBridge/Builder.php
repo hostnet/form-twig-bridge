@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 
 use Symfony\Component\Form\Forms;
 
+use Symfony\Component\Form\FormFactoryBuilder;
+
 /**
  * Uses the builder pattern to create a form factory and a Twig_Environment through the
  * TwigEnvironmentBuilder
@@ -45,7 +47,6 @@ class Builder
 
   /**
    * Builds the factory
-   * @todo allow to add own form extensions?
    * @return \Symfony\Component\Form\FormFactoryInterface
    */
   public function buildFormFactory($enableAnnotationMapping = false)
@@ -54,10 +55,19 @@ class Builder
     $validator = $enableAnnotationMapping ?
       Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator() :
       Validation::createValidator();
-    return Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
+    $builder = Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
                                             ->addExtension(new ValidatorExtension($validator))
-                                            ->addExtension(new HttpFoundationExtension())
-                                            ->getFormFactory();
+                                            ->addExtension(new HttpFoundationExtension());
+    $this->registerFormExtensions($builder);
+    return $builder->getFormFactory();
+  }
+
+  /**
+   * Users should subclass this Builder and override this method to register
+   * any extra Form Extensions they require.
+   * @param FormFactoryBuilder $builder
+   */
+  protected function registerFormExtensions(FormFactoryBuilder $builder) {
   }
 
   private function ensureCsrfProviderExists()
