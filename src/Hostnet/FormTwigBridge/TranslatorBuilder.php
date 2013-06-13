@@ -28,6 +28,10 @@ class TranslatorBuilder
     return $this;
   }
 
+  /**
+   * Builds a translator
+   * @return \Symfony\Component\Translation\TranslatorInterface
+   */
   public function build()
   {
     $fixer = new VendorDirectoryFixer();

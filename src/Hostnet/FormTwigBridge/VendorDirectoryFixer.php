@@ -20,6 +20,10 @@ class VendorDirectoryFixer
     }
   }
 
+  /**
+   * Get the location of the vendor directory
+   * @return string
+   */
   public function getVendorDirectory()
   {
     return $this->vendor_directory;
