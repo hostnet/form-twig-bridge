@@ -24,9 +24,13 @@ Installation
    use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
    
    $csrf = new DefaultCsrfProvider('change this token');
+   $translator_builder = new TranslatorBuilder();
+   // $translator_builder->setLocale('nl_NL'); // Uncomment if you want a non-english locale
    $builder = new Builder();
-   $environment =
-      $builder->setCsrfProvider($csrf)->createTwigEnvironmentBuilder()->build();
+   $environment = $builder
+       ->setCsrfProvider($csrf)
+       ->setTranslator($translator_builder->build())
+       ->createTwigEnvironmentBuilder()->build();
    $factory = $builder->buildFormFactory();
    ```
 5. Use the form factory to create your form, see the [symfony docs](http://symfony.com/doc/current/book/forms.html).
@@ -44,8 +48,13 @@ Builder
 TwigEnvironmentBuilder
 - ```prependTwigLoader``` adds additional twig loaders that are called before the loader added by the form-twig-bridge. You can always add loaders yourself, even after building.
 - ```setFormTheme``` for a custom form theme, note that you will have to add a loader that loads your form theme
-- ```setLocale``` for localized forms.
 
+Changelog
+------------
+1.0
+- Upgraded from Symfony 2.1 to Symfony 2.3.
+- [Breaking] Added ```setTranslator``` to ```Builder```.
+- [Breaking] Removed ```setLocale``` from the ```TwigEnvironmentBuilder```.
 
 Running the unit-tests
 ------------
