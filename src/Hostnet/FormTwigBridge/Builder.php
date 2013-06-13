@@ -1,5 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Symfony\Component\Form\FormExtensionInterface;
 
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
@@ -25,6 +27,8 @@ class Builder
 {
   private $csrf_provider;
 
+  private $translator;
+
   private $annotation_mapping_enabled = false;
 
   private $form_extensions = array();
@@ -41,14 +45,26 @@ class Builder
   }
 
   /**
+   * The translator to use for translating messages.
+   * You can use the TranslatorBuilder to create it
+   * @param TranslatorInterface $translator
+   * @return \Hostnet\FormTwigBridge\Builder
+   */
+  public function setTranslator(TranslatorInterface $translator)
+  {
+    $this->translator = $translator;
+    return $this;
+  }
+
+  /**
    * Creates a builder you can use to get the Twig_Environment
    * @return \Hostnet\FormTwigBridge\\Hostnet\FormTwigBridge\TwigEnvironmentBuilder
    */
   public function createTwigEnvironmentBuilder()
   {
-    $this->ensureCsrfProviderExists();
+    $this->ensureCsrfProviderAndTranslatorExist();
     $builder = new TwigEnvironmentBuilder();
-    return $builder->setCsrfProvider($this->csrf_provider);
+    return $builder->setCsrfProvider($this->csrf_provider)->setTranslator($this->translator);
   }
 
   /**
@@ -79,9 +95,10 @@ class Builder
    */
   public function buildFormFactory()
   {
-    $this->ensureCsrfProviderExists();
+    $this->ensureCsrfProviderAndTranslatorExist();
     $validator = $this->buildValidator();
-    $builder = Forms::createFormFactoryBuilder()->addExtension(new CsrfExtension($this->csrf_provider))
+    $csrf = new CsrfExtension($this->csrf_provider, $this->translator, TranslatorBuilder::TRANSLATION_DOMAIN);
+    $builder = Forms::createFormFactoryBuilder()->addExtension($csrf)
                                             ->addExtension(new ValidatorExtension($validator))
                                             ->addExtension(new HttpFoundationExtension());
     foreach($this->form_extensions as $extension) {
@@ -93,16 +110,20 @@ class Builder
   private function buildValidator()
   {
     $builder = Validation::createValidatorBuilder();
+    $builder->setTranslator($this->translator)->setTranslationDomain(TranslatorBuilder::TRANSLATION_DOMAIN);
     if($this->annotation_mapping_enabled) {
       $builder->enableAnnotationMapping();
     }
     return $builder->getValidator();
   }
 
-  private function ensureCsrfProviderExists()
+  private function ensureCsrfProviderAndTranslatorExist()
   {
     if(!$this->csrf_provider instanceof CsrfProviderInterface) {
       throw new \DomainException('The FormTwigBridge builder needs a csrf secret to continue');
+    }
+    if(!$this->translator instanceof TranslatorInterface) {
+      throw new \DomainException('The FormTwigBridge builder needs a translator to continue');
     }
   }
 }

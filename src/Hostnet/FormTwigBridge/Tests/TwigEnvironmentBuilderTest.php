@@ -14,11 +14,12 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals($builder, $builder->setCsrfProvider(new DefaultCsrfProvider('foo')));
   }
 
-  public function testSetLocale()
+  public function testSetTranslator()
   {
     // Test chaining
     $builder = new TwigEnvironmentBuilder();
-    $this->assertEquals($builder, $builder->setLocale('nl_NL'));
+    $this->assertEquals($builder,
+        $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface')));
   }
 
   public function testBuild()
@@ -27,9 +28,15 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
     $builder = new TwigEnvironmentBuilder();
     $this->assertDomainExceptionAtBuild($builder, 'Missing csrf secret');
 
+    // 2. Fail without TranslatorBuilder
+    $builder = new TwigEnvironmentBuilder();
+    $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    $this->assertDomainExceptionAtBuild($builder, 'Missing translator');
+
     // 2. Gives back a Twig_Environment at success
     $builder = new TwigEnvironmentBuilder();
     $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
     $this->assertInstanceOf('Twig_Environment', $builder->build());
   }
 

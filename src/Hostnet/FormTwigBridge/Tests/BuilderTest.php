@@ -1,5 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge\Tests;
+use Hostnet\FormTwigBridge\TranslatorBuilder;
+
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
@@ -17,6 +19,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     // Test chaining
     $builder = new Builder();
     $this->assertEquals($builder, $builder->setCsrfProvider(new DefaultCsrfProvider('bar')));
+  }
+
+  public function testSetTranslator()
+  {
+    // Test chaining
+    $builder = new Builder();
+    $this->assertEquals($builder,
+        $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface')));
   }
 
   public function testEnableAnnotationMapping()
@@ -44,9 +54,19 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     } catch(\DomainException $e) {
     }
 
-    // 2. Succes!
+    // 2. Try without translator
     $builder = new Builder();
     $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    try {
+      $builder->createTwigEnvironmentBuilder();
+      $this->fail('Should have thrown exception due to missing CSRF');
+    } catch(\DomainException $e) {
+    }
+
+    // 3. Succes!
+    $builder = new Builder();
+    $builder->setCsrfProvider(new DefaultCsrfProvider('test'))
+      ->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
     $this
         ->assertInstanceOf('\Hostnet\FormTwigBridge\TwigEnvironmentBuilder',
           $builder->createTwigEnvironmentBuilder());
@@ -62,9 +82,19 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     } catch(\DomainException $e) {
     }
 
+    // 2. Try without translator
+    $builder = new Builder();
+    $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    try {
+      $builder->buildFormFactory();
+      $this->fail('Should have thrown exception due to missing CSRF');
+    } catch(\DomainException $e) {
+    }
+
     // 2. Yay!
     $builder = new Builder();
-    $builder->setCsrfProvider(new DefaultCsrfProvider('foo'));
+    $builder->setCsrfProvider(new DefaultCsrfProvider('foo'))
+      ->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
     $this
         ->assertInstanceOf('\Symfony\Component\Form\FormFactoryInterface',
           $builder->buildFormFactory());
@@ -74,7 +104,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
   {
     $builder = new Builder();
     $environment =
-      $builder->setCsrfProvider($this->mockCsrf())->createTwigEnvironmentBuilder()
+      $builder->setCsrfProvider($this->mockCsrf())->setTranslator($this->mockTranslator())->createTwigEnvironmentBuilder()
               ->prependTwigLoader($this->mockLoader())->build();
     $factory = $builder->buildFormFactory();
     $form = $factory->createBuilder()->add('first_name')->getForm();
@@ -95,8 +125,8 @@ HTML;
   {
     $builder = new Builder();
     $environment =
-      $builder->setCsrfProvider($this->mockCsrf())->createTwigEnvironmentBuilder()
-              ->setLocale('nl_NL')->prependTwigLoader($this->mockLoader())->build();
+      $builder->setCsrfProvider($this->mockCsrf())->setTranslator($this->mockTranslator())->createTwigEnvironmentBuilder()
+        ->prependTwigLoader($this->mockLoader())->build();
     $factory = $builder->buildFormFactory();
     $options = array('constraints' => array(new NotBlank()));
     $form = $factory->createBuilder()->add('naam', 'text', $options)->getForm();
@@ -121,6 +151,12 @@ HTML;
 
     $csrf->expects($this->once())->method('generateCsrfToken')->will($this->returnValue('foo'));
     return $csrf;
+  }
+
+  private function mockTranslator()
+  {
+    $builder = new TranslatorBuilder();
+    return $builder->setLocale('nl_NL')->build();
   }
 
   private function mockLoader()

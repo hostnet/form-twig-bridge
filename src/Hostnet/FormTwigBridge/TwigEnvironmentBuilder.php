@@ -1,5 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 
 use Symfony\Bridge\Twig\Extension\FormExtension;
@@ -23,20 +25,17 @@ use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 class TwigEnvironmentBuilder
 {
   const TWIG_TEMPLATE_DIR = '/symfony/twig-bridge/Symfony/Bridge/Twig/Resources/views/Form/';
-  const FORM_TRANSLATIONS_DIR = '/symfony/form/Symfony/Component/Form/Resources/translations/';
-  const VALIDATOR_TRANSLATIONS_DIR = '/symfony/validator/Symfony/Component/Validator/Resources/translations/';
-
-  /**
-   * The location of the vendor directory
-   * @var String
-   */
-  private $vendor_directory;
 
   /**
    * The CSRF secret the form framework should use
    * @var CsrfProviderInterface
    */
   private $csrf_provider;
+
+  /**
+   * @var \Symfony\Component\Translation\TranslatorInterface
+   */
+  private $translator;
 
   /**
    * If you want to add an additional loader
@@ -50,24 +49,12 @@ class TwigEnvironmentBuilder
    */
   private $form_theme = 'form_div_layout.html.twig';
 
-  /**
-   * @var String The locale, like en, fr_FR, fr_BE
-   */
-  private $locale = 'en';
-
   public function __construct()
   {
-    // Try the composed path
-    $this->vendor_directory = __DIR__ . '/../../../../../../vendor/';
-    try {
-      $this->twig_loader =
-        new \Twig_Loader_Filesystem(array($this->vendor_directory . self::TWIG_TEMPLATE_DIR));
-    } catch(\Twig_Error_Loader $e) {
-      // Fall back to the directly cloned path
-      $this->vendor_directory = __DIR__ . '/../../../vendor/';
-      $this->twig_loader =
-        new \Twig_Loader_Filesystem(array($this->vendor_directory . self::TWIG_TEMPLATE_DIR));
-    }
+    $fixer = new VendorDirectoryFixer();
+    $vendor_directory = $fixer->getVendorDirectory();
+    $this->twig_loader =
+      new \Twig_Loader_Filesystem(array($vendor_directory . self::TWIG_TEMPLATE_DIR));
   }
 
   /**
@@ -78,6 +65,12 @@ class TwigEnvironmentBuilder
   public function setCsrfProvider(CsrfProviderInterface $csrf_provider)
   {
     $this->csrf_provider = $csrf_provider;
+    return $this;
+  }
+
+  public function setTranslator(TranslatorInterface $translator)
+  {
+    $this->translator = $translator;
     return $this;
   }
 
@@ -104,20 +97,13 @@ class TwigEnvironmentBuilder
     return $this;
   }
 
-  /**
-   * @param String $locale The locale, like en, fr_FR, fr_BE
-   * @return \Hostnet\FormTwigBridge\TwigEnvironmentBuilder
-   */
-  public function setLocale($locale)
-  {
-    $this->locale = $locale;
-    return $this;
-  }
-
   public function build()
   {
     if(!$this->csrf_provider instanceof CsrfProviderInterface) {
       throw new \DomainException('Need a csrf provider to continue');
+    }
+    if(!$this->translator instanceof TranslatorInterface) {
+      throw new \DomainException('Need a translator to continue');
     }
     $environment = new \Twig_Environment($this->twig_loader);
     $this->addTranslationExtension($environment);
@@ -132,18 +118,7 @@ class TwigEnvironmentBuilder
    */
   private function addTranslationExtension(\Twig_environment $environment)
   {
-    // Set up the Translation component
-    $translator = new Translator($this->locale);
-    $pos = strpos($this->locale, '_');
-    $file = 'validators.' . ($pos ? substr($this->locale, 0, $pos) : $this->locale) . '.xlf';
-    $translator->addLoader('xlf', new XliffFileLoader());
-    $translator
-        ->addResource('xlf', $this->vendor_directory . self::FORM_TRANSLATIONS_DIR . $file,
-          $this->locale, 'validators');
-    $translator
-        ->addResource('xlf', $this->vendor_directory . self::VALIDATOR_TRANSLATIONS_DIR . $file,
-          $this->locale, 'validators');
-    $environment->addExtension(new TranslationExtension($translator));
+    $environment->addExtension(new TranslationExtension($this->translator));
   }
 
   private function addFormExtension(\Twig_environment $environment)

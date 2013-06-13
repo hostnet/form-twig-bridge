@@ -1,5 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge\Tests;
+use Hostnet\FormTwigBridge\TranslatorBuilder;
+
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Hostnet\FormTwigBridge\PHPRenderer;
@@ -12,6 +14,8 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
 {
   private $csrf;
 
+  private $translator;
+
   public function setUp()
   {
     $this->csrf =
@@ -21,6 +25,9 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
 
     $this->csrf->expects($this->any())->method('generateCsrfToken')
          ->will($this->returnValue('foo'));
+    $builder = new TranslatorBuilder();
+    $builder->setLocale('nl_NL');
+    $this->translator = $builder->build();
   }
 
   public function test__construct()
@@ -42,7 +49,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
 
     // Lets test a file upload
     $builder = new Builder();
-    $factory = $builder->setCsrfProvider($this->csrf)->buildFormFactory();
+    $factory = $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->buildFormFactory();
     $form = $factory->createBuilder()->add('picture', 'file')->getForm();
     $renderer = new PHPRenderer($environment);
     $html = 'enctype="multipart/form-data"';
@@ -70,7 +77,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
     // Lets bind it, give some errors
     $form->bind(array());
     $renderer = new PHPRenderer($environment);
-    $html = '<ul><li>The CSRF token is invalid. Please try to resubmit the form.</li></ul>';
+    $html = '<ul><li>De CSRF-token is ongeldig. Probeer het formulier opnieuw te versturen.</li></ul>';
     $this->assertEquals($html, $renderer->renderErrors($form->createView()));
   }
 
@@ -101,14 +108,13 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
   private function mockEnvironment()
   {
     $builder = new TwigEnvironmentBuilder();
-    $builder->setCsrfProvider($this->csrf);
-    return $builder->build();
+    return $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->build();
   }
 
   private function mockForm()
   {
     $builder = new Builder();
-    $factory = $builder->setCsrfProvider($this->csrf)->buildFormFactory();
+    $factory = $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->buildFormFactory();
     $options = array('constraints' => array(new NotBlank()));
     return $factory->createBuilder()->add('naam', 'text', $options)->getForm();
   }
