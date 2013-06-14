@@ -14,7 +14,7 @@ Installation
 2. Add to your composer.json
   ```
   "require": {
-      "hostnet/form-twig-bridge": "0.*"
+      "hostnet/form-twig-bridge": ">=1.0"
   }
 
   ```
