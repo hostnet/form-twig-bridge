@@ -1,7 +1,5 @@
-[![Total Downloads](https://poser.pugx.org/hostnet/form-twig-bridge/downloads.png)](https://packagist.org/packages/hostnet/form-twig-bridge)
-
 form-twig-bridge
-================
+----------------
 
 This package might be nice for you if you
 - Want to use the Symfony 2 form component
@@ -10,8 +8,9 @@ This package might be nice for you if you
 
 It's inspired by Bernhard Schussek's [standalone-forms](https://github.com/bschussek/standalone-forms/)
 
-Installation
-------------
+[![Total Downloads](https://poser.pugx.org/hostnet/form-twig-bridge/downloads.png)](https://packagist.org/packages/hostnet/form-twig-bridge)
+
+### Installation
 1. [Download Composer][1].
 2. Add to your composer.json
   ```
@@ -40,8 +39,7 @@ Installation
 7. If you use PHP templates, use the [public methods](https://github.com/hostnet/form-twig-bridge/blob/master/src/Hostnet/FormTwigBridge/PHPRenderer.php) of the PHPRenderer.
    Initialize it with ```new PHPRenderer($twig_environment)```
 
-Optional configuration options
-------------
+### Optional configuration options
 
 Builder
 - ```enableAnnotationMapping``` enables doctrine annotation mapping (requires [doctrine/annotations](https://packagist.org/packages/doctrine/annotations))
@@ -51,15 +49,15 @@ TwigEnvironmentBuilder
 - ```prependTwigLoader``` adds additional twig loaders that are called before the loader added by the form-twig-bridge. You can always add loaders yourself, even after building.
 - ```setFormTheme``` for a custom form theme, note that you will have to add a loader that loads your form theme
 
-Changelog
-------------
+### Changelog
+
 1.0
 - Upgraded from Symfony 2.1 to Symfony 2.3.
 - [Breaking] Added ```setTranslator``` to ```Builder```.
 - [Breaking] Removed ```setLocale``` from the ```TwigEnvironmentBuilder```.
 
-Running the unit-tests
-------------
+### Running the unit-tests
+
 1. Clone the repository yourself
 2. Go to the directory of the clone
 3. Run ```composer.phar install```
