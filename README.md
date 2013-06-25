@@ -1,3 +1,5 @@
+[![Total Downloads](https://poser.pugx.org/hostnet/form-twig-bridge/downloads.png)](https://packagist.org/packages/hostnet/form-twig-bridge)
+
 form-twig-bridge
 ================
 
