@@ -27,16 +27,16 @@ class VendorDirectoryFixer
    * This plugin is mostly useful if it's included without the symfony framework
    * But this makes sure it works if included with a full Symfony2 installation
    * @param string $component_name
-   * @param string $path_within_package
+   * @param string $path_within_component
    * @return string The actual location
    */
-  public function getLocation($component_name, $path_within_package)
+  public function getLocation($component_name, $path_within_component)
   {
     if($this->complete_symfony_checkout) {
-      $path = $this->vendor_directory . '/symfony/symfony/src';
+      $component_location = $this->vendor_directory . '/symfony/symfony/src';
     } else {
-      $path = $this->vendor_directory . '/symfony/' . $component_name;
+      $component_location = $this->vendor_directory . '/symfony/' . $component_name;
     }
-    return $path . $path_within_package;
+    return $component_location . $path_within_component;
   }
 }
