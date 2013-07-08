@@ -24,7 +24,7 @@ use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
  */
 class TwigEnvironmentBuilder
 {
-  const TWIG_TEMPLATE_DIR = '/symfony/twig-bridge/Symfony/Bridge/Twig/Resources/views/Form/';
+  const TEMPLATE_DIR = '/Symfony/Bridge/Twig/Resources/views/Form/';
 
   /**
    * The CSRF secret the form framework should use
@@ -52,9 +52,8 @@ class TwigEnvironmentBuilder
   public function __construct()
   {
     $fixer = new VendorDirectoryFixer();
-    $vendor_directory = $fixer->getVendorDirectory();
-    $this->twig_loader =
-      new \Twig_Loader_Filesystem(array($vendor_directory . self::TWIG_TEMPLATE_DIR));
+    $dir = $fixer->getLocation('twig-bridge', self::TEMPLATE_DIR);
+    $this->twig_loader = new \Twig_Loader_Filesystem(array($dir));
   }
 
   /**

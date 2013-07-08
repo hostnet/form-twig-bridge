@@ -13,8 +13,8 @@ class TranslatorBuilder
 {
   const TRANSLATION_DOMAIN = 'validators';
 
-  const FORM_TRANSLATIONS_DIR = '/symfony/form/Symfony/Component/Form/Resources/translations/';
-  const VALIDATOR_TRANSLATIONS_DIR = '/symfony/validator/Symfony/Component/Validator/Resources/translations/';
+  const FORM_TRANSLATIONS_DIR = '/Symfony/Component/Form/Resources/translations/';
+  const VALIDATOR_TRANSLATIONS_DIR = '/Symfony/Component/Validator/Resources/translations/';
 
   private $locale;
 
@@ -35,17 +35,15 @@ class TranslatorBuilder
   public function build()
   {
     $fixer = new VendorDirectoryFixer();
-    $vendor_directory = $fixer->getVendorDirectory();
     // Set up the Translation component
     $translator = new Translator($this->locale);
     $pos = strpos($this->locale, '_');
     $file = 'validators.' . ($pos ? substr($this->locale, 0, $pos) : $this->locale) . '.xlf';
     $translator->addLoader('xlf', new XliffFileLoader());
-    $translator
-    ->addResource('xlf', $vendor_directory . self::FORM_TRANSLATIONS_DIR . $file,
+    $translator->addResource('xlf', $fixer->getLocation('form', self::FORM_TRANSLATIONS_DIR . $file),
         $this->locale, self::TRANSLATION_DOMAIN);
     $translator
-    ->addResource('xlf', $vendor_directory . self::VALIDATOR_TRANSLATIONS_DIR . $file,
+    ->addResource('xlf', $fixer->getLocation('validator', self::VALIDATOR_TRANSLATIONS_DIR . $file),
         $this->locale, self::TRANSLATION_DOMAIN);
     return $translator;
   }

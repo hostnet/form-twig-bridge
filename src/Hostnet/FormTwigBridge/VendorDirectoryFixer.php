@@ -9,6 +9,8 @@ class VendorDirectoryFixer
 {
   private $vendor_directory;
 
+  private $complete_symfony_checkout;
+
   public function __construct()
   {
     $vendor_directory = __DIR__ . '/../../../../../../vendor/';
@@ -18,14 +20,23 @@ class VendorDirectoryFixer
       // Fall back to the directly cloned path
       $this->vendor_directory = __DIR__ . '/../../../vendor/';
     }
+    $this->complete_symfony_checkout = is_dir($this->vendor_directory . '/symfony/symfony');
   }
 
   /**
-   * Get the location of the vendor directory
-   * @return string
+   * This plugin is mostly useful if it's included without the symfony framework
+   * But this makes sure it works if included with a full Symfony2 installation
+   * @param string $component_name
+   * @param string $path_within_package
+   * @return string The actual location
    */
-  public function getVendorDirectory()
+  public function getLocation($component_name, $path_within_package)
   {
-    return $this->vendor_directory;
+    if($this->complete_symfony_checkout) {
+      $path = $this->vendor_directory . '/symfony/symfony/src';
+    } else {
+      $path = $this->vendor_directory . '/symfony/' . $component_name;
+    }
+    return $path . $path_within_package;
   }
 }
