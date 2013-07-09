@@ -53,6 +53,7 @@ TwigEnvironmentBuilder
 
 1.0.1
 - Can now be used inside a full-fletched Symfony2 framework.
+
 1.0
 - Upgraded from Symfony 2.1 to Symfony 2.3.
 - [Breaking] Added ```setTranslator``` to ```Builder```.
