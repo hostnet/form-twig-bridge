@@ -6,7 +6,9 @@ This package might be nice for you if you
 - With the Twig rendering
 - But don't want to use all of Symfony 2
 
-It's inspired by Bernhard Schussek's [standalone-forms](https://github.com/bschussek/standalone-forms/)
+It's inspired by Bernhard Schussek's [standalone-forms](https://github.com/bschussek/standalone-forms/).
+
+If you want to use more then just the form framework, and you're inside a Symfony 1 application, maybe the [hnDependencyInjectionPlugin](https://github.com/hostnet/hnDependencyInjectionPlugin) is more suitable for you.
 
 [![Total Downloads](https://poser.pugx.org/hostnet/form-twig-bridge/downloads.png)](https://packagist.org/packages/hostnet/form-twig-bridge)
 
