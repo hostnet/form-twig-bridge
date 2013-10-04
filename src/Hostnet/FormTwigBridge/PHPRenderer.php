@@ -24,6 +24,7 @@ class PHPRenderer
       throw new \DomainException('The FormRenderer needs an environment with the FormExtension');
     }
     $this->environment = $environment;
+    $this->environment->getExtension('form')->initRuntime($this->environment);
   }
 
   /**
