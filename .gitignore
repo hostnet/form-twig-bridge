@@ -1,4 +1,5 @@
-vendor/*
-.buildpath
-.project
-.settings
+/vendor
+/.buildpath
+/.project
+/.settings
+/composer.lock
