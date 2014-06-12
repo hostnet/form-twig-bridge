@@ -11,6 +11,7 @@ It's inspired by Bernhard Schussek's [standalone-forms](https://github.com/bschu
 If you want to use more then just the form framework, and you're inside a Symfony 1 application, maybe the [hnDependencyInjectionPlugin](https://github.com/hostnet/hnDependencyInjectionPlugin) is more suitable for you.
 
 [![Total Downloads](https://poser.pugx.org/hostnet/form-twig-bridge/downloads.png)](https://packagist.org/packages/hostnet/form-twig-bridge)
+[![Build Status](https://travis-ci.org/hostnet/form-twig-bridge.svg?branch=master)](https://travis-ci.org/hostnet/form-twig-bridge)
 
 ### Installation
 1. [Download Composer][1].
