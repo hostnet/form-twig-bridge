@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": ["form", "twig"],
     "homepage": "https://github.com/hostnet/form-twig-bridge",
-    "license": "EPL-1.0",
+    "license": "MIT",
     "authors": [
         {
             "name": "Nico Schoenmaker",
