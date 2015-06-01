@@ -1,17 +1,16 @@
 <?php
 namespace Hostnet\FormTwigBridge\Tests;
 
-use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
-
 use Hostnet\FormTwigBridge\TwigEnvironmentBuilder;
 
 class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
-  public function testSetCsrfProvider()
+  public function testSetCsrfTokenManager()
   {
     // Test chaining
     $builder = new TwigEnvironmentBuilder();
-    $this->assertEquals($builder, $builder->setCsrfProvider(new DefaultCsrfProvider('foo')));
+    $token_manager = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+    $this->assertSame($builder, $builder->setCsrfTokenManager($token_manager->reveal()));
   }
 
   public function testSetTranslator()
@@ -30,12 +29,13 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
 
     // 2. Fail without TranslatorBuilder
     $builder = new TwigEnvironmentBuilder();
-    $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    $token_manager = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+    $builder->setCsrfTokenManager($token_manager->reveal());
     $this->assertDomainExceptionAtBuild($builder, 'Missing translator');
 
     // 2. Gives back a Twig_Environment at success
     $builder = new TwigEnvironmentBuilder();
-    $builder->setCsrfProvider(new DefaultCsrfProvider('test'));
+    $builder->setCsrfTokenManager($token_manager->reveal());
     $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
     $this->assertInstanceOf('Twig_Environment', $builder->build());
   }

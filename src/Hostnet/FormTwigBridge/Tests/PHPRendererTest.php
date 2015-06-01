@@ -1,14 +1,12 @@
 <?php
 namespace Hostnet\FormTwigBridge\Tests;
-use Hostnet\FormTwigBridge\TranslatorBuilder;
-
-use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Hostnet\FormTwigBridge\PHPRenderer;
-
-use Hostnet\FormTwigBridge\TwigEnvironmentBuilder;
 
 use Hostnet\FormTwigBridge\Builder;
+use Hostnet\FormTwigBridge\PHPRenderer;
+use Hostnet\FormTwigBridge\TranslatorBuilder;
+use Hostnet\FormTwigBridge\TwigEnvironmentBuilder;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PHPRendererTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,13 +16,9 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
 
   public function setUp()
   {
-    $this->csrf =
-      $this
-          ->getMock('Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface',
-            array('generateCsrfToken', 'isCsrfTokenValid'));
-
-    $this->csrf->expects($this->any())->method('generateCsrfToken')
-         ->will($this->returnValue('foo'));
+    $this->csrf = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+    $token = new CsrfToken('form', 'foo');
+    $this->csrf->getToken('form')->willReturn($token);
     $builder = new TranslatorBuilder();
     $builder->setLocale('nl_NL');
     $this->translator = $builder->build();
@@ -49,7 +43,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
 
     // Lets test a file upload
     $builder = new Builder();
-    $factory = $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->buildFormFactory();
+    $factory = $builder->setCsrfTokenManager($this->csrf->reveal())->setTranslator($this->translator)->buildFormFactory();
     $form = $factory->createBuilder()->add('picture', 'file')->getForm();
     $renderer = new PHPRenderer($environment);
     $html = 'enctype="multipart/form-data"';
@@ -62,7 +56,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
     $form_view = $this->mockForm()->createView();
     $renderer = new PHPRenderer($environment);
     $html =
-      '<div id="form"><div><label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
+      '<div id="form"><div>                <label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
     $this->assertEquals($html, $renderer->renderWidget($form_view));
   }
 
@@ -75,7 +69,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
     $this->assertEquals('', $renderer->renderErrors($form->createView()));
 
     // Lets bind it, give some errors
-    $form->bind(array());
+    $form->submit(array());
     $renderer = new PHPRenderer($environment);
     $html = '<ul><li>De CSRF-token is ongeldig. Probeer het formulier opnieuw te versturen.</li></ul>';
     $this->assertEquals($html, $renderer->renderErrors($form->createView()));
@@ -87,7 +81,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
     $form_view = $this->mockForm()->createView();
     $field = $form_view->children['naam'];
     $renderer = new PHPRenderer($environment);
-    $html = '<label for="form_naam" class="required">Naam</label>';
+    $html = '                <label for="form_naam" class="required">Naam</label>';
     $this->assertEquals($html, $renderer->renderLabel($field));
   }
 
@@ -97,7 +91,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
     $form = $this->mockForm()->createView();
     $renderer = new PHPRenderer($environment);
     $html =
-      '<div><label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div>';
+      '<div>                <label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div>';
     $this->assertEquals($html, $renderer->renderRow($form->children['naam']));
 
     // good opportunity to test renderRest as well. Renders all the other fields
@@ -108,13 +102,13 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
   private function mockEnvironment()
   {
     $builder = new TwigEnvironmentBuilder();
-    return $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->build();
+    return $builder->setCsrfTokenManager($this->csrf->reveal())->setTranslator($this->translator)->build();
   }
 
   private function mockForm()
   {
     $builder = new Builder();
-    $factory = $builder->setCsrfProvider($this->csrf)->setTranslator($this->translator)->buildFormFactory();
+    $factory = $builder->setCsrfTokenManager($this->csrf->reveal())->setTranslator($this->translator)->buildFormFactory();
     $options = array('constraints' => array(new NotBlank()));
     return $factory->createBuilder()->add('naam', 'text', $options)->getForm();
   }

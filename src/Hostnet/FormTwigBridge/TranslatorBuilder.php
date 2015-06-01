@@ -2,7 +2,6 @@
 namespace Hostnet\FormTwigBridge;
 
 use Symfony\Component\Translation\Loader\XliffFileLoader;
-
 use Symfony\Component\Translation\Translator;
 
 /**
@@ -13,8 +12,8 @@ class TranslatorBuilder
 {
   const TRANSLATION_DOMAIN = 'validators';
 
-  const FORM_TRANSLATIONS_DIR = '/Symfony/Component/Form/Resources/translations/';
-  const VALIDATOR_TRANSLATIONS_DIR = '/Symfony/Component/Validator/Resources/translations/';
+  const FORM_TRANSLATIONS_DIR = '/Resources/translations/';
+  const VALIDATOR_TRANSLATIONS_DIR = '/Resources/translations/';
 
   private $locale;
 

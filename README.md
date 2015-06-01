@@ -25,14 +25,14 @@ If you want to use more then just the form framework, and you're inside a Symfon
 3. Use the builders to create a FormFactory and a Twig_Environment with the correct configuration:
    ```
    use Hostnet\FormTwigBridge\Builder;
-   use Symfony\Component\Form\Extension\Csrf\CsrfProvider\DefaultCsrfProvider;
+   use Symfony\Component\Security\Csrf\TokenStorage\NativeSessionTokenStorage;
    
-   $csrf = new DefaultCsrfProvider('change this token');
+   $csrf = new NativeSessionTokenStorage();
    $translator_builder = new TranslatorBuilder();
    // $translator_builder->setLocale('nl_NL'); // Uncomment if you want a non-english locale
    $builder = new Builder();
    $environment = $builder
-       ->setCsrfProvider($csrf)
+       ->setCsrfTokenManager($csrf)
        ->setTranslator($translator_builder->build())
        ->createTwigEnvironmentBuilder()->build();
    $factory = $builder->buildFormFactory();
@@ -53,6 +53,10 @@ TwigEnvironmentBuilder
 - ```setFormTheme``` for a custom form theme, note that you will have to add a loader that loads your form theme
 
 ### Changelog
+
+1.1.0
+- Now works with Symfony 2.7.0
+- Deprecated `setCsrfProvider` in favour of `setCsrfTokenManager` for Symfony 3.0 compatibility
 
 1.0.1
 - Can now be used inside a full-fletched Symfony2 framework.
