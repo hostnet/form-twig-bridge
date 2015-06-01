@@ -1,13 +1,12 @@
 <?php
-namespace Hostnet\FormTwigBridge\Tests;
+namespace Hostnet\FormTwigBridge;
 
-use Hostnet\FormTwigBridge\Builder;
-use Hostnet\FormTwigBridge\PHPRenderer;
-use Hostnet\FormTwigBridge\TranslatorBuilder;
-use Hostnet\FormTwigBridge\TwigEnvironmentBuilder;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * @covers Hostnet\FormTwigBridge\PHPRenderer
+ */
 class PHPRendererTest extends \PHPUnit_Framework_TestCase
 {
   private $csrf;

@@ -1,8 +1,9 @@
 <?php
-namespace Hostnet\FormTwigBridge\Tests;
+namespace Hostnet\FormTwigBridge;
 
-use Hostnet\FormTwigBridge\TranslatorBuilder;
-
+/**
+ * @covers Hostnet\FormTwigBridge\TranslatorBuilder
+ */
 class TranslatorBuilderTest extends \PHPUnit_Framework_TestCase
 {
   public function testSetLocale()

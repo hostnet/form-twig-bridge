@@ -1,7 +1,12 @@
 <phpunit colors="true" bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="Form twig bridge test suite">
-            <directory>./src/Hostnet/FormTwigBridge/Tests/</directory>
+            <directory>./test</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
