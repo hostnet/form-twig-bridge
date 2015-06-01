@@ -1,8 +1,6 @@
 <?php
-namespace Hostnet\FormTwigBridge\Tests;
+namespace Hostnet\FormTwigBridge;
 
-use Hostnet\FormTwigBridge\Builder;
-use Hostnet\FormTwigBridge\TranslatorBuilder;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Validator\Constraints\NotBlank;
 

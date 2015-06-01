@@ -1,8 +1,9 @@
 <?php
-namespace Hostnet\FormTwigBridge\Tests;
+namespace Hostnet\FormTwigBridge;
 
-use Hostnet\FormTwigBridge\TwigEnvironmentBuilder;
-
+/**
+ * @covers Hostnet\FormTwigBridge\TwigEnvironmentBuilder
+ */
 class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
   public function testSetCsrfTokenManager()

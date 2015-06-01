@@ -13,12 +13,12 @@ class VendorDirectoryFixer
 
   public function __construct()
   {
-    $vendor_directory = __DIR__ . '/../../../../../../vendor/';
+    $vendor_directory = __DIR__ . '/../../../../vendor/';
     if(is_dir($vendor_directory)) {
       $this->vendor_directory = $vendor_directory;
     } else {
       // Fall back to the directly cloned path
-      $this->vendor_directory = __DIR__ . '/../../../vendor/';
+      $this->vendor_directory = __DIR__ . '/../vendor/';
     }
     $this->complete_symfony_checkout = is_dir($this->vendor_directory . '/symfony/symfony');
   }
