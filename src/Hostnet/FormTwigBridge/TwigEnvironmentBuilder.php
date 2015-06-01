@@ -1,20 +1,15 @@
 <?php
 namespace Hostnet\FormTwigBridge;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Symfony\Bridge\Twig\Form\TwigRenderer;
 
 use Symfony\Bridge\Twig\Extension\FormExtension;
-
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
-
-use Symfony\Component\Translation\Loader\XliffFileLoader;
-
-use Symfony\Component\Translation\Translator;
-
+use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Loader\XliffFileLoader;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Responsible for building a Twig_environment
@@ -24,13 +19,13 @@ use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
  */
 class TwigEnvironmentBuilder
 {
-  const TEMPLATE_DIR = '/Symfony/Bridge/Twig/Resources/views/Form/';
+  const TEMPLATE_DIR = '/Resources/views/Form/';
 
   /**
    * The CSRF secret the form framework should use
    * @var CsrfProviderInterface
    */
-  private $csrf_provider;
+  private $csrf_token_manager;
 
   /**
    * @var \Symfony\Component\Translation\TranslatorInterface
@@ -58,13 +53,31 @@ class TwigEnvironmentBuilder
 
   /**
    * The CSRF secret the form framework should use
+   * @deprecated Use setCsrfTokenManager instead. To be removed when we support Symfony 3.0
    * @param CsrfProviderInterface $csrf_provider
    * @return \Hostnet\FormTwigBridge\TwigEnvironmentBuilder chainable
    */
   public function setCsrfProvider(CsrfProviderInterface $csrf_provider)
   {
-    $this->csrf_provider = $csrf_provider;
+    trigger_error(
+      'The CsrfProviderInterface is deprecated, use setCsrfTokenManager instead',
+      E_USER_DEPRECATED
+    );
+    // We assign to the csrf_token_manager, since Symfony still accepts both at this time.
+    $this->csrf_token_manager = $csrf_provider;
     return $this;
+  }
+
+  /**
+   * The CSRF token manager to use
+   *
+   * @param CsrfTokenManagerInterface $csrf_token_manager
+   * @return \Hostnet\FormTwigBridge\Builder
+   */
+  public function setCsrfTokenManager(CsrfTokenManagerInterface $csrf_token_manager)
+  {
+      $this->csrf_token_manager = $csrf_token_manager;
+      return $this;
   }
 
   public function setTranslator(TranslatorInterface $translator)
@@ -98,8 +111,9 @@ class TwigEnvironmentBuilder
 
   public function build()
   {
-    if(!$this->csrf_provider instanceof CsrfProviderInterface) {
-      throw new \DomainException('Need a csrf provider to continue');
+    if(!$this->csrf_token_manager instanceof CsrfProviderInterface &&
+      !$this->csrf_token_manager instanceof CsrfTokenManagerInterface) {
+      throw new \DomainException('Need a csrf token manager to continue');
     }
     if(!$this->translator instanceof TranslatorInterface) {
       throw new \DomainException('Need a translator to continue');
@@ -124,6 +138,6 @@ class TwigEnvironmentBuilder
   {
     $engine = new TwigRendererEngine(array($this->form_theme));
     $engine->setEnvironment($environment);
-    $environment->addExtension(new FormExtension(new TwigRenderer($engine, $this->csrf_provider)));
+    $environment->addExtension(new FormExtension(new TwigRenderer($engine, $this->csrf_token_manager)));
   }
 }
