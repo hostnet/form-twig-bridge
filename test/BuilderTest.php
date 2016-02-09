@@ -1,6 +1,7 @@
 <?php
 namespace Hostnet\FormTwigBridge;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -140,7 +141,7 @@ HTML;
         ->prependTwigLoader($this->mockLoader())->build();
         $factory     = $builder->buildFormFactory();
         $options     = array('constraints' => array(new NotBlank()));
-        $form        = $factory->createBuilder()->add('naam', 'text', $options)->getForm();
+        $form        = $factory->createBuilder()->add('naam', TextType::class, $options)->getForm();
 
         $form->submit(array('naam' => ''));
         $this

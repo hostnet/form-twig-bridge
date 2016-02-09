@@ -29,12 +29,23 @@ class PHPRenderer
     }
 
     /**
-     * Renders the enctype attribute of the form
+     * Renders the opening form tag of the form
+     * @param FormView $view
      * @param array $variables
      */
-    public function renderEnctype(FormView $view, array $variables = array())
+    public function renderStart(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'enctype', $variables);
+        return $this->renderBlock($view, 'start', $variables);
+    }
+
+    /**
+     * Renders the closing form tag of the form
+     * @param FormView $view
+     * @param array $variables
+     */
+    public function renderEnd(FormView $view, array $variables = [])
+    {
+        return $this->renderBlock($view, 'end', $variables);
     }
 
     /**
@@ -42,7 +53,7 @@ class PHPRenderer
      * @param FormView $view
      * @param array $variables
      */
-    public function renderWidget(FormView $view, array $variables = array())
+    public function renderWidget(FormView $view, array $variables = [])
     {
         return $this->renderBlock($view, 'widget', $variables);
     }
@@ -52,7 +63,7 @@ class PHPRenderer
      * @param FormView $view
      * @param array $variables
      */
-    public function renderErrors(FormView $view, array $variables = array())
+    public function renderErrors(FormView $view, array $variables = [])
     {
         return $this->renderBlock($view, 'errors', $variables);
     }
@@ -62,7 +73,7 @@ class PHPRenderer
      * @param FormView $view
      * @param array $variables
      */
-    public function renderLabel(FormView $view, array $variables = array())
+    public function renderLabel(FormView $view, array $variables = [])
     {
         return $this->renderBlock($view, 'label', $variables);
     }
@@ -72,7 +83,7 @@ class PHPRenderer
      * @param FormView $view
      * @param array $variables
      */
-    public function renderRow(FormView $view, array $variables = array())
+    public function renderRow(FormView $view, array $variables = [])
     {
         return $this->renderBlock($view, 'row', $variables);
     }
@@ -82,14 +93,14 @@ class PHPRenderer
      * @param FormView $view
      * @param array $variables
      */
-    public function renderRest(FormView $view, array $variables = array())
+    public function renderRest(FormView $view, array $variables = [])
     {
         return $this->renderBlock($view, 'rest', $variables);
     }
 
-    private function renderBlock(FormView $view, $block, array $variables = array())
+    private function renderBlock(FormView $view, $block, array $variables = [])
     {
         return $this->environment->getExtension('form')->renderer
-                ->searchAndRenderBlock($view, $block, $variables);
+             ->searchAndRenderBlock($view, $block, $variables);
     }
 }
