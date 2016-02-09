@@ -17,6 +17,9 @@ class TranslatorBuilderTest extends \PHPUnit_Framework_TestCase
         $builder    = new TranslatorBuilder();
         $translator = $builder->setLocale('nl_NL')->build();
         $this->assertInstanceOf('Symfony\Component\Translation\TranslatorInterface', $translator);
-        $this->assertEquals('Ongeldig creditcardnummer.', $translator->trans('Invalid card number.', array(), TranslatorBuilder::TRANSLATION_DOMAIN));
+        $this->assertEquals(
+            'Ongeldig creditcardnummer.',
+            $translator->trans('Invalid card number.', array(), TranslatorBuilder::TRANSLATION_DOMAIN)
+        );
     }
 }

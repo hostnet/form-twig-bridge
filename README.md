@@ -39,8 +39,8 @@ If you want to use more then just the form framework, and you're inside a Symfon
    ```
 5. Use the form factory to create your form, see the [symfony docs](http://symfony.com/doc/current/book/forms.html).
 6. If you use Twig templates: Use the form factory and the twig environment like you'd normally do
-7. If you use PHP templates, use the [public methods](https://github.com/hostnet/form-twig-bridge/blob/master/src/Hostnet/FormTwigBridge/PHPRenderer.php) of the PHPRenderer.
-   Initialize it with ```new PHPRenderer($twig_environment)```
+7. If you use PHP templates, use the [public methods](https://github.com/hostnet/form-twig-bridge/blob/master/src/Hostnet/FormTwigBridge/PhpRenderer.php) of the PhpRenderer.
+   Initialize it with ```new PhpRenderer($twig_environment)```
 
 ### Optional configuration options
 
