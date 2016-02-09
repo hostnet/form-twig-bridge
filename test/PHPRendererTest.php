@@ -54,7 +54,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
         $form_view   = $this->mockForm()->createView();
         $renderer    = new PHPRenderer($environment);
         $html        =
-        '<div id="form"><div>                <label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
+        '<div id="form"><div><label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
         $this->assertEquals($html, $renderer->renderWidget($form_view));
     }
 
@@ -79,7 +79,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
         $form_view   = $this->mockForm()->createView();
         $field       = $form_view->children['naam'];
         $renderer    = new PHPRenderer($environment);
-        $html        = '                <label for="form_naam" class="required">Naam</label>';
+        $html        = '<label for="form_naam" class="required">Naam</label>';
         $this->assertEquals($html, $renderer->renderLabel($field));
     }
 
@@ -89,7 +89,7 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
         $form        = $this->mockForm()->createView();
         $renderer    = new PHPRenderer($environment);
         $html        =
-        '<div>                <label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div>';
+        '<div><label for="form_naam" class="required">Naam</label><input type="text" id="form_naam" name="form[naam]" required="required" /></div>';
         $this->assertEquals($html, $renderer->renderRow($form->children['naam']));
 
       // good opportunity to test renderRest as well. Renders all the other fields
