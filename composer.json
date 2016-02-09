@@ -17,6 +17,7 @@
         "source": "https://github.com/hostnet/form-twig-bridge"
     },
     "require": {
+        "php"                    : ">=5.5",
         "symfony/form"           : "^2.7.0",
         "symfony/validator"      : "^2.7.0",
         "symfony/config"         : "^2.7.0",
