@@ -1,6 +1,8 @@
 <?php
 namespace Hostnet\FormTwigBridge;
 
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -31,21 +33,23 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
         new PHPRenderer(new \Twig_Environment());
     }
 
-    public function testRenderEnctype()
+    public function testRenderStartAndEnd()
     {
         // Not a special form - empty result
         $environment = $this->mockEnvironment();
         $form_view   = $this->mockForm()->createView();
         $renderer    = new PHPRenderer($environment);
-        $this->assertEquals('', $renderer->renderEnctype($form_view));
+        $this->assertEquals('<form name="form" method="post">', $renderer->renderStart($form_view));
+        $this->assertStringEndsWith('</form>', $renderer->renderEnd($form_view));
 
         // Lets test a file upload
         $builder  = new Builder();
         $factory  = $builder->setCsrfTokenManager($this->csrf->reveal())->setTranslator($this->translator)->buildFormFactory();
-        $form     = $factory->createBuilder()->add('picture', 'file')->getForm();
+        $form     = $factory->createBuilder()->add('picture', FileType::class)->getForm();
         $renderer = new PHPRenderer($environment);
-        $html     = 'enctype="multipart/form-data"';
-        $this->assertEquals($html, $renderer->renderEnctype($form->createView()));
+        $html     = '<form name="form" method="post" enctype="multipart/form-data">';
+        $this->assertEquals($html, $renderer->renderStart($form->createView()));
+        $this->assertStringEndsWith('</form>', $renderer->renderEnd($form_view));
     }
 
     public function testRenderWidget()
@@ -108,6 +112,6 @@ class PHPRendererTest extends \PHPUnit_Framework_TestCase
         $builder = new Builder();
         $factory = $builder->setCsrfTokenManager($this->csrf->reveal())->setTranslator($this->translator)->buildFormFactory();
         $options = array('constraints' => array(new NotBlank()));
-        return $factory->createBuilder()->add('naam', 'text', $options)->getForm();
+        return $factory->createBuilder()->add('naam', TextType::class, $options)->getForm();
     }
 }
