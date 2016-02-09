@@ -113,9 +113,12 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testFunctionalTest()
     {
         $builder     = new Builder();
-        $environment =
-        $builder->setCsrfTokenManager($this->mockCsrf())->setTranslator($this->mockTranslator())->createTwigEnvironmentBuilder()
-              ->prependTwigLoader($this->mockLoader())->build();
+        $environment = $builder
+            ->setCsrfTokenManager($this->mockCsrf())
+            ->setTranslator($this->mockTranslator())
+            ->createTwigEnvironmentBuilder()
+            ->prependTwigLoader($this->mockLoader())
+            ->build();
         $factory     = $builder->buildFormFactory();
         $form        = $factory->createBuilder()->add('first_name')->getForm();
 
@@ -128,17 +131,20 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     private function getExpectedOutput()
     {
-        return <<<HTML
-Hi.<div id="form"><div><label for="form_first_name" class="required">First name</label><input type="text" id="form_first_name" name="form[first_name]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>
-HTML;
+        return 'Hi.<div id="form"><div><label for="form_first_name" class="required">First name</label>' .
+               '<input type="text" id="form_first_name" name="form[first_name]" required="required" />' .
+               '</div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
     }
 
     public function testFunctionalValidationTranslationTest()
     {
         $builder     = new Builder();
-        $environment =
-        $builder->setCsrfTokenManager($this->mockCsrf())->setTranslator($this->mockTranslator())->createTwigEnvironmentBuilder()
-        ->prependTwigLoader($this->mockLoader())->build();
+        $environment = $builder
+            ->setCsrfTokenManager($this->mockCsrf())
+            ->setTranslator($this->mockTranslator())
+            ->createTwigEnvironmentBuilder()
+            ->prependTwigLoader($this->mockLoader())
+            ->build();
         $factory     = $builder->buildFormFactory();
         $options     = array('constraints' => array(new NotBlank()));
         $form        = $factory->createBuilder()->add('naam', TextType::class, $options)->getForm();
@@ -153,7 +159,10 @@ HTML;
 
     private function getExpectedTranslatedOutput()
     {
-        return 'Hi.<div id="form"><ul><li>De CSRF-token is ongeldig. Probeer het formulier opnieuw te versturen.</li></ul><div><label for="form_naam" class="required">Naam</label><ul><li>Deze waarde mag niet leeg zijn.</li></ul><input type="text" id="form_naam" name="form[naam]" required="required" /></div><input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
+        return 'Hi.<div id="form"><ul><li>De CSRF-token is ongeldig. Probeer het formulier opnieuw te versturen.</li>' .
+               '</ul><div><label for="form_naam" class="required">Naam</label><ul><li>Deze waarde mag niet leeg zijn.' .
+               '</li></ul><input type="text" id="form_naam" name="form[naam]" required="required" /></div>' .
+               '<input type="hidden" id="form__token" name="form[_token]" value="foo" /></div>';
     }
 
     private function mockCsrf()

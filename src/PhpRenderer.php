@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormView;
  * Check out the Builder and the TwigEnvironmentBuilder for how to build those!
  * @author Nico Schoenmaker <nschoenmaker@hostnet.nl>
  */
-class PHPRenderer
+class PhpRenderer
 {
     /**
      * @var \Twig_Environment
