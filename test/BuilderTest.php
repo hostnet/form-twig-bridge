@@ -71,7 +71,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $token_manager = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
         $builder
             ->setCsrfTokenManager($token_manager->reveal())
-            ->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
+            ->setTranslator($this->createMock('Symfony\Component\Translation\TranslatorInterface'));
         $this->assertInstanceOf(
             '\Hostnet\FormTwigBridge\TwigEnvironmentBuilder',
             $builder->createTwigEnvironmentBuilder()
@@ -103,7 +103,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $token_manager = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
         $builder
             ->setCsrfTokenManager($token_manager->reveal())
-            ->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
+            ->setTranslator($this->createMock('Symfony\Component\Translation\TranslatorInterface'));
         $this->assertInstanceOf(
             '\Symfony\Component\Form\FormFactoryInterface',
             $builder->buildFormFactory()

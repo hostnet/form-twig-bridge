@@ -20,7 +20,7 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = new TwigEnvironmentBuilder();
         $this->assertEquals(
             $builder,
-            $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'))
+            $builder->setTranslator($this->createMock('Symfony\Component\Translation\TranslatorInterface'))
         );
     }
 
@@ -49,7 +49,7 @@ class TwigEnvironmentBuilderTest extends \PHPUnit_Framework_TestCase
         $builder       = new TwigEnvironmentBuilder();
         $token_manager = $this->prophesize('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
         $builder->setCsrfTokenManager($token_manager->reveal());
-        $builder->setTranslator($this->getMock('Symfony\Component\Translation\TranslatorInterface'));
+        $builder->setTranslator($this->createMock('Symfony\Component\Translation\TranslatorInterface'));
         $this->assertInstanceOf('Twig_Environment', $builder->build());
     }
 }
