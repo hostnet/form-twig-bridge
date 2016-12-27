@@ -1,5 +1,7 @@
 **Not maintained, not in use within Hostnet**
 
+Pull requests will be accepted
+
 form-twig-bridge
 ----------------
 
